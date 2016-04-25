@@ -105,6 +105,11 @@ static void sig_connect_audio_output(int foo, siginfo_t *bar, void *baz) {
   set_requested_connection_state_to_output(1);
 }
 
+static void sig_shutdown_rtsp_client(int foo, siginfo_t *bar, void *baz) {
+   debug(1, "shutting down any RTSP clients");
+   rtsp_request_shutdown_stream();
+}
+
 char* get_version_string() {
   char* version_string = malloc(200);
   if (version_string) {
@@ -649,6 +654,7 @@ void signal_setup(void) {
   sigdelset(&set, SIGSTOP);
   sigdelset(&set, SIGCHLD);
   sigdelset(&set, SIGUSR2);
+  sigdelset(&set, SIGWINCH);
   pthread_sigmask(SIG_BLOCK, &set, NULL);
 
   // setting this to SIG_IGN would prevent signalling any threads.
@@ -671,6 +677,9 @@ void signal_setup(void) {
 
   sa.sa_sigaction = &sig_child;
   sigaction(SIGCHLD, &sa, NULL);
+
+  sa.sa_sigaction = &sig_shutdown_rtsp_client;
+  sigaction(SIGWINCH, &sa, NULL);
 }
 
 // forked daemon lets the spawner know it's up and running OK
