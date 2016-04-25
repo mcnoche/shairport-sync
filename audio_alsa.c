@@ -281,6 +281,7 @@ static int init(int argc, char **argv) {
                                                   &alsa_mix_maxv) < 0)
       debug(1, "Can't read mixer's [linear] min and max volumes.");
     else {
+      debug(1, "Volume min: %ld, max: %ld",alsa_mix_minv, alsa_mix_maxv );
       if (snd_mixer_selem_get_playback_dB_range(alsa_mix_elem, &alsa_mix_mindb,
                                                 &alsa_mix_maxdb) == 0) {
 
