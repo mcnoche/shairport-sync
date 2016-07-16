@@ -1,8 +1,24 @@
-HEAD
+Version 2.8.4.4 – Development Version
+----
+**Enhancement**
+* Use alsa direct access (mmap) feature to improve performance if mmap is supported. Thanks to [Yihui Xiong](https://github.com/xiongyihui).
+
+Version 2.8.4.3 – Development Version
+----
+**Bug Fix**
+
+* Set the RTSP socket to close on `exec()` of child processes; otherwise, background `run_this_before_play_begins` or `run_this_after_play_ends` commands that are sleeping prevent the daemon from being restarted because the listening RTSP port is still in use. Fixes [#329](https://github.com/mikebrady/shairport-sync/issues/329).
+
+Version 2.8.4.2 – Development Version
 ----
 **Bug Fixes**
 
+* Fixed an issue where you could not compile the audio_pipe back end without enabling metadata support (thanks to [busa-projects](https://github.com/busa-projects) for reporting the issue).
 * Fixed a few small issues causing compiler warnings in `mdns_dns_sd.c`.
+
+
+**Other**
+* Removed the INSTALL file – it's generated automatically by `autoreconf -fi` anyway – added it to the files to be ignored in `.gitignore` and added a simple `INSTALL.md` file.
 
 Version 2.8.4.1 – Development Version
 ----
