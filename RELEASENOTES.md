@@ -1,3 +1,93 @@
+Version 3.0d24 – Development Version
+----
+Version 3 is a big update -- please see below.
+
+**New Feature**
+* Set Max Volume. Add a new setting, for advanced users only, in the `general` section. Use the `volume_max_db` setting to allow you to specify the maximum level to set on the hardware mixer (if chosen) or the built-in software mixer otherwise. The software mixer's range is 0.0 dB to -96.1 dB. The setting must be a number with a decimal point, e.g. 21.3.
+
+Version 3.0d23 – Development Version
+----
+
+**New Feature**
+* Choose Interface. Add a new setting, for advanced users only, in the `general` section. Use the `interface` setting to allow you to specify the interface on which to provide the AirPlay service. Omit the setting to get the default, which is to choose the interfaces automatically.
+
+Version 3.0d22 – Development Version
+----
+
+**Bug Fix**
+* Fixed a bug which prevented successful building in the OpenWrt build system. The problem was caused by an `#include apple_alac.h` in `player.c` which was actioned even if the apple alac decoder was not selected. This caused the OpenWrt build system to expect the standard C++ library – required by the apple alac code – to be referenced, but it was not specified on the build manifest and therefore stopped the build. The solution was to make the `#include` conditional on selecting the apple alac decoder.
+
+Version 3.0d21 – Development Version
+----
+
+**Bug Fix**
+* Fixed a bug which turned off resync by default. Duh.
+
+Version 3.0d20 – Development Version
+----
+
+**Bug Fix**
+* Fix a small and generally silent error in configure.ac so that it only looks for the systemd direcotry if systemd has been chosen. It caused a warning when cross-compiling.
+
+Version 3.0d19 – Development Version
+----
+
+**New Feature**
+* Reduces processor load back to V2.X levels by using a precalculated array of pseudorandom numbers to do dithering. Doesn't seem to make any audible difference.
+
+Version 3.0d18 – Development Version
+----
+
+Big Update
+====
+
+This is a big update, so please be careful, as there are likely to be lots of bugs and maybe even regressions. It's still very much a moving target. The processor load is about 25% higher. There is still quite a bit of work to do, especially on the backends apart from ALSA.
+
+The most obvious audible change is if you are using software volume control and can take advantage of 32- or 24-bit DACs. Dithering can now occur on a 32-bit or 24-bit sample rather than on a 16-bit sample, making the noise floor very much lower. This is the case, for example, with a Pimoroni PHAT DAC.
+
+**New Features**
+* 8-bit, 16-bit, 24-bit, 24-bit three-byte (S24_3LE and S24_3BE) and 32-bit output to ALSA devices. (Other back ends are not updated yet.)
+* 44,100, 88,200, 176,400 and 352,800 sample per second output. This is done using simple upsampling.
+* Internal processing including software volume control and interpolation is done after sample size and rate conversion.
+* Apple ALAC decoder support. This needs the `libalac` library, available at [ALAC](https://github.com/mikebrady/alac). Add the flag `--with-apple-alac` to the `./configure` arguments. Then you can choose the Apple ALAC decoder in the configuration file.
+* Support for `mbed TLS` has been added and the use of `PolarSSL` is deprecated, as `mbed TLS` is a development of `PolarSSL` and `PolarSSL` itself is not being developed further.
+* Settings that were denominated in frames are now deprecated but still honoured. Deprecation warnings are issued.
+
+Pesky Changes You Cannot Ignore
+====
+* Settings have changed -- basically, any timings that were denominated in frames are now in seconds. Please refer to the shairport-sync.conf.sample file for details.
+* Sox-based interpolation at higher sample rates may overload your CPU -- yopu might have to choose between higher sample rates and sox-based interpolation.
+
+**Bugs**
+* Documentation is not updated.
+
+Version 2.8.4.8 – Development Version
+----
+**Enhancements**
+* Add a new metadata item `clip` (for `CL`ient `IP`). This item is a string comprising the IP number of the "client", and is sent when a play session is starting. The "client" is the sender of the audio stream, e.g. iTunes on a Mac, or the Music player in iOS.
+* When synchronisation has been disabled on the ALSA device (you should only do this for testing), Shairport Sync now refrains from asking for buffer length information from the device.
+
+Version 2.8.4.7 – Development Version
+----
+Pesky Changes You Cannot Ignore
+====
+
+* This update means the build process now uses the directory path `sysconfdir` to determine where to place the configuration file `shairport-sync.conf`. The default value for `sysconfdir` is `/usr/local/etc` which is used in the BSD family, whereas `/etc` is normally used in Linux. So, to retain the present behaviour of Shairport Sync, you must add an extra parameter to the `./configure... ` command. The parameter you must add is `--sysconfdir=/etc`. (This has been added to the sample configuration command line in README.md.)
+* Shairport Sync has been updated to use the value of `sysconfdir` to determine where to look for the configuration file. If `sysconfdir` has been left with its default value of `/usr/local/etc`, then Shairport Sync will look for `/usr/local/etc/shairport-sync.conf`. If, as recommended for Linux, `sysconfdir` has been set to `/etc`, then Shairport Sync will look, as before, for `/etc/shairport-sync.conf`.
+
+**Enhancement**
+* The version string output when you use the command-line option `-V` now includes the value of the `sysconfdir`, e.g. `2.8.4.7-OpenSSL-Avahi-ALSA-soxr-sysconfdir:/etc`.
+
+Version 2.8.4.6 – Development Version
+----
+**Enhancement**
+* Add a new `alsa` configuration setting: `use_mmap_if_available` to control the use of mmap. The default is `"yes"` -- see [#351](https://github.com/mikebrady/shairport-sync/issues/351).
+
+Version 2.8.4.5 – Development Version
+----
+**Enhancement**
+* Handle varying packet lengths -- this makes it compatible with the HTC Connect, HTCs AirPlay implementation. Thanks to [Jörg Krause](https://github.com/joerg-krause) for his detective work, and see [#338](https://github.com/mikebrady/shairport-sync/issues/338).
+
 Version 2.8.4.4 – Development Version
 ----
 **Enhancement**

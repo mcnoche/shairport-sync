@@ -1,9 +1,14 @@
 SUBDIRS = man
 
 bin_PROGRAMS = shairport-sync
-shairport_sync_SOURCES = shairport.c rtsp.c mdns.c mdns_external.c common.c rtp.c player.c alac.c audio.c 
+shairport_sync_SOURCES = shairport.c rtsp.c mdns.c mdns_external.c common.c rtp.c player.c alac.c audio.c
 
-AM_CFLAGS = -Wno-multichar
+AM_CFLAGS = -Wno-multichar -DSYSCONFDIR=\"$(sysconfdir)\"
+AM_CPPFLAGS = -Wno-multichar -DSYSCONFDIR=\"$(sysconfdir)\"
+
+if USE_APPLE_ALAC
+  shairport_sync_SOURCES += apple_alac.cpp
+endif
 
 if USE_CUSTOMPIDDIR
 AM_CFLAGS+= \
@@ -42,6 +47,10 @@ if USE_AO
 shairport_sync_SOURCES += audio_ao.c
 endif
 
+if USE_SOUNDIO
+shairport_sync_SOURCES += audio_soundio.c
+endif
+
 if USE_PULSE
 shairport_sync_SOURCES += audio_pulse.c
 endif
@@ -52,13 +61,13 @@ endif
 
 install-exec-hook:
 if INSTALL_CONFIG_FILES
-	[ -e $(DESTDIR)/etc ] || mkdir $(DESTDIR)/etc
-	cp scripts/shairport-sync.conf $(DESTDIR)/etc/shairport-sync.conf.sample
-	[ -f $(DESTDIR)/etc/shairport-sync.conf ] || cp scripts/shairport-sync.conf $(DESTDIR)/etc/shairport-sync.conf
+	[ -e $(DESTDIR)$(sysconfdir) ] || mkdir $(DESTDIR)$(sysconfdir)
+	cp scripts/shairport-sync.conf $(DESTDIR)$(sysconfdir)/shairport-sync.conf.sample
+	[ -f $(DESTDIR)$(sysconfdir)/shairport-sync.conf ] || cp scripts/shairport-sync.conf $(DESTDIR)$(sysconfdir)/shairport-sync.conf
 endif
 if INSTALL_SYSTEMV
-	[ -e $(DESTDIR)/etc/init.d ] || mkdir -p $(DESTDIR)/etc/init.d
-	[ -f $(DESTDIR)/etc/init.d/shairport-sync ] || cp scripts/shairport-sync $(DESTDIR)/etc/init.d/
+	[ -e $(DESTDIR)$(sysconfdir)/init.d ] || mkdir -p $(DESTDIR)$(sysconfdir)/init.d
+	[ -f $(DESTDIR)$(sysconfdir)/init.d/shairport-sync ] || cp scripts/shairport-sync $(DESTDIR)$(sysconfdir)/init.d/
 endif
 if INSTALL_SYSTEMD
 	[ -e $(DESTDIR)$(systemdsystemunitdir) ] || mkdir -p $(DESTDIR)$(systemdsystemunitdir)
