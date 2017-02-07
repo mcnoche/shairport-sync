@@ -474,7 +474,7 @@ void *rtp_timing_receiver(void *arg) {
       if (first_local_time==0) {
         first_local_time = local_time_chosen;
         first_remote_time = remote_time_chosen;
-        uint64_t clock_drift = 0;
+        clock_drift = 0;
       } else {
         uint64_t local_time_change = local_time_chosen - first_local_time;
         uint64_t remote_time_change = remote_time_chosen - first_remote_time;
@@ -501,7 +501,7 @@ void *rtp_timing_receiver(void *arg) {
       if (reference_timestamp>=play_segment_reference_frame)
         frame_difference = (uint64_t)reference_timestamp-(uint64_t)play_segment_reference_frame;
       else // rollover
-        frame_difference = (uint64_t)reference_timestamp+0x100000000-(uint64_t)play_segment_reference_frame;
+        frame_difference = (uint64_t)reference_timestamp+UINT64_C(0x100000000)-(uint64_t)play_segment_reference_frame;
       uint64_t frame_time_difference_calculated = (((uint64_t)frame_difference<<32)/44100);
       uint64_t frame_time_difference_actual = remote_reference_timestamp_time-play_segment_reference_frame_remote_time; // this is all done by reference to the sources' system clock
       // debug(1,"%llu frames since play started, %llu usec calculated, %llu usec actual",frame_difference, (frame_time_difference_calculated*1000000)>>32, (frame_time_difference_actual*1000000)>>32);
